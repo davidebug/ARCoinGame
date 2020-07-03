@@ -199,7 +199,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &223974226
 PrefabInstance:
@@ -256,7 +256,7 @@ PrefabInstance:
     - target: {fileID: 5371615573967386362, guid: 73154edf5d4a64744b006f63439e85f0,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5371615573967386362, guid: 73154edf5d4a64744b006f63439e85f0,
         type: 3}
@@ -469,8 +469,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1114040581}
+  m_Children: []
   m_Father: {fileID: 2049590073}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -596,12 +595,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1114040580}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.113, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalPosition: {x: 0, y: 0.164, z: 0}
+  m_LocalScale: {x: 0.2, y: 0.4, z: 0.2}
   m_Children:
   - {fileID: 1577749884}
-  m_Father: {fileID: 546490551}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1114040582
 MonoBehaviour:
@@ -616,6 +615,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinSound: {fileID: 1577749885}
+  planeManager: {fileID: 2049590071}
 --- !u!114 &1114040583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -629,6 +629,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerObject: {fileID: 1114040580}
+  cameraObject: {fileID: 546490546}
 --- !u!136 &1114040584
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -641,7 +642,7 @@ CapsuleCollider:
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 1
-  m_Direction: 1
+  m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1114040585
 MeshRenderer:
@@ -909,6 +910,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlaceablePrefab: {fileID: 5503975514618149840, guid: ade3448bdb4d47645abe5ad318a08670,
     type: 3}
+  arPlaneManager: {fileID: 2049590071}
 --- !u!114 &2049590075
 MonoBehaviour:
   m_ObjectHideFlags: 0

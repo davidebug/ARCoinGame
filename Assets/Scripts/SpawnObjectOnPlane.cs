@@ -5,6 +5,7 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
 [RequireComponent(typeof(ARRaycastManager))]
+[RequireComponent(typeof(ARPlaneManager))]
 public class SpawnObjectOnPlane : MonoBehaviour
 {
     private ARRaycastManager raycastManager;
@@ -13,42 +14,34 @@ public class SpawnObjectOnPlane : MonoBehaviour
     [SerializeField]
     public GameObject PlaceablePrefab;
 
+    [SerializeField]
+    public ARPlaneManager arPlaneManager;
+
     static List<ARRaycastHit> s_Hits = new List<ARRaycastHit>();
 
     public void Awake(){
         raycastManager = GetComponent<ARRaycastManager>();
+        arPlaneManager = GetComponent<ARPlaneManager>();
+        arPlaneManager.planesChanged += SpawnFirstTime;
     }
 
-    bool TryGetTouchPosition(out Vector2 touchPosition){
-        if(Input.touchCount > 0){
-            touchPosition = Input.GetTouch(0).position;
-            return true;
+    private void SpawnFirstTime(ARPlanesChangedEventArgs args){
+        if(args.added != null && spawnedObj == null){
+            ARPlane arPlane = args.added[0];
+            // Vector3 min = arPlane.GetComponent<MeshFilter>().mesh.bounds.min;
+            // Vector3 max = arPlane.GetComponent<MeshFilter>().mesh.bounds.max;
+            // Vector3 position = arPlane.transform.position -  new Vector3 ((Random.Range(min.x*5, max.x*5)), arPlane.transform.position.y, (Random.Range(min.z*5, max.z*5)));
+            spawnedObj = Instantiate(PlaceablePrefab, arPlane.transform.position, Quaternion.identity);
         }
-        touchPosition = default;
-        return false;
     }
-    // Start is called before the first frame update
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(!TryGetTouchPosition(out Vector2 touchPosition)){
-            return;
-        }
-        if(raycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon)){
-            var hitPose = s_Hits[0].pose;
-            if(spawnedObj == null){
-                spawnedObj = Instantiate(PlaceablePrefab, hitPose.position, hitPose.rotation);
-            }
-            else{
-                spawnedObj.transform.position = hitPose.position;
-                spawnedObj.transform.rotation = hitPose.rotation;
-            }
-        }
         Debug.Log("Coin position --> " +  spawnedObj.transform.position.ToString());
     }
 }
