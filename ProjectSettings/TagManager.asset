@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Coin
   - Terrain
+  - Scan Button
+  - Score
+  - Time
   layers:
   - Default
   - TransparentFX

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 
@@ -11,6 +12,9 @@ public class CoinCollector : MonoBehaviour
     [SerializeField]
     public ARPlaneManager planeManager;
 
+    public Text textScore;
+
+    private int score = 0;
     void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.tag == "Coin")
@@ -19,6 +23,8 @@ public class CoinCollector : MonoBehaviour
             
             collision.gameObject.transform.position = CalculateNextPosition();
             Debug.Log("COIN - New Position --> " + collision.gameObject.transform.position.ToString());
+            score ++;
+            textScore.text = score.ToString();
             coinSound.Play();
         }
     }
