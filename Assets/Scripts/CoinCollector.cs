@@ -42,7 +42,7 @@ public class CoinCollector : MonoBehaviour
             Debug.Log("COIN - MIN Plane Bound --> " + min.ToString());
             Debug.Log("COIN - MAX Plane Bound --> " + max.ToString());
             Debug.Log(plane.gameObject.transform.position.y);
-            Vector3 position = plane.gameObject.transform.position - new Vector3((Random.Range(min.x , max.x)), plane.gameObject.transform.position.y*0.05f, (Random.Range(min.z , max.z )));
+            Vector3 position = plane.gameObject.transform.position - new Vector3((Random.Range(min.x*0.98f, max.x*0.98f)), plane.gameObject.transform.position.y * 0.02f, (Random.Range(min.z*0.98f, max.z*0.98f)));
             possiblePositions.Add(position);
         }
         if(possiblePositions.Count == 0){
