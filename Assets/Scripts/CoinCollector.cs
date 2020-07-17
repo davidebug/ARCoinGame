@@ -10,7 +10,10 @@ public class CoinCollector : MonoBehaviour
     public AudioSource coinSound;
 
     [SerializeField]
-    public ARPlaneManager planeManager;
+    private ARPlaneManager planeManager;
+
+    [SerializeField]
+    private GameObject player;
 
     public Text textScore;
 
@@ -20,10 +23,10 @@ public class CoinCollector : MonoBehaviour
         if (collision.collider.tag == "Coin")
         {
             Debug.Log("COIN COLLECTED");
-            
+
             collision.gameObject.transform.position = CalculateNextPosition();
             Debug.Log("COIN - New Position --> " + collision.gameObject.transform.position.ToString());
-            score ++;
+            score++;
             textScore.text = score.ToString();
             coinSound.Play();
         }
@@ -42,16 +45,18 @@ public class CoinCollector : MonoBehaviour
             Debug.Log("COIN - MIN Plane Bound --> " + min.ToString());
             Debug.Log("COIN - MAX Plane Bound --> " + max.ToString());
             Debug.Log(plane.gameObject.transform.position.y);
-            Vector3 position = plane.gameObject.transform.position - new Vector3((Random.Range(min.x*0.98f, max.x*0.98f)), plane.gameObject.transform.position.y * 0.02f, (Random.Range(min.z*0.98f, max.z*0.98f)));
-            possiblePositions.Add(position);
+            Vector3 position = plane.gameObject.transform.position - new Vector3((Random.Range(min.x * 0.90f, max.x * 0.90f)), plane.gameObject.transform.position.y * 0.02f, (Random.Range(min.z * 0.90f, max.z * 0.90f)));
+            if (Vector3.Distance(player.transform.position, position) > 0.1)
+                possiblePositions.Add(position);
         }
-        if(possiblePositions.Count == 0){
+        if (possiblePositions.Count == 0)
+        {
             Debug.Log("COIN - No possible positions found");
-            return new Vector3(0,0,0);
+            return new Vector3(0, 0, 0);
         }
         int r = Random.Range(0, possiblePositions.Count);
         return possiblePositions[r];
-        
+
     }
 
 }

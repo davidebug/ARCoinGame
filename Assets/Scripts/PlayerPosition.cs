@@ -8,12 +8,11 @@ public class PlayerPosition : MonoBehaviour
 {
     public GameObject playerObject;
     public GameObject cameraObject;
-    // Update is called once per frame
     void Update()
     {   
         Vector3 newPosition = new Vector3(cameraObject.transform.position.x,0.15f,cameraObject.transform.position.z);
         playerObject.transform.SetPositionAndRotation(newPosition,Quaternion.identity);
 
-        Debug.Log("Player position --> " +  playerObject.transform.position.ToString());
+        // Debug.Log("Player position --> " +  playerObject.transform.position.ToString());
     }
 }
