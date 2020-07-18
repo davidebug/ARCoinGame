@@ -18,17 +18,23 @@ public class CoinCollector : MonoBehaviour
     public Text textScore;
 
     private int score = 0;
+
+    private int toCollect = 8;
     void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.tag == "Coin")
         {
             Debug.Log("COIN COLLECTED");
-
             collision.gameObject.transform.position = CalculateNextPosition();
             Debug.Log("COIN - New Position --> " + collision.gameObject.transform.position.ToString());
             score++;
             textScore.text = score.ToString();
             coinSound.Play();
+
+            if (GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Coins && score == toCollect)
+            {
+                GameStateKeeper.getInstance().setGameState(GameStateKeeper.GameState.Ended);
+            }
         }
     }
 

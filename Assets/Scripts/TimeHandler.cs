@@ -9,7 +9,7 @@ public class TimeHandler : MonoBehaviour
     private float time;
 
     private bool timerGameMode;
-   
+
     void Start()
     {
 
@@ -17,20 +17,28 @@ public class TimeHandler : MonoBehaviour
         if (timerGameMode)
             time = 60.0f;
         else
-            time = 0.0f;
+            time = 0;
     }
     void Update()
     {
-        
-        if (timerGameMode)
+        if (GameStateKeeper.getInstance().getGameState() != GameStateKeeper.GameState.Ended)
         {
-            time = time - 1.0f / 30.0f;
-            timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
-        }
-        else
-        {
-            time = time + 1.0f / 30.0f;
-            timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
+
+            if (timerGameMode)
+            {
+                time -= Time.deltaTime;
+                timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
+                if (time < 0)
+                {
+                    GameStateKeeper.getInstance().setGameState(GameStateKeeper.GameState.Ended);
+                }
+
+            }
+            else
+            {
+                time += Time.deltaTime;
+                timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
+            }
         }
     }
 }

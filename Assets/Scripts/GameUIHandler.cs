@@ -30,20 +30,31 @@ public class GameUIHandler : MonoBehaviour
     [SerializeField]
     private GameObject scanInfoPanel;
 
-     [SerializeField]
+    [SerializeField]
     private GameObject gameInfoPanel;
+
+    [SerializeField]
+    private GameObject gameEndPanel;
 
     [SerializeField]
     private Text gameInfoText;
 
     [SerializeField]
     private GameObject scanInfoPanel2;
-    // public GameObject replayButton;
-    // public GameObject rescanButton;
 
+    [SerializeField]
+    private GameObject replayButton;
+
+    [SerializeField]
+    private GameObject rescanButton;
+
+    private bool playing = false;
 
     void Awake()
     {
+        gameEndPanel.SetActive(false);
+        replayButton.SetActive(false);
+        rescanButton.SetActive(false);
         gameInfoPanel.SetActive(false);
         continueButton.SetActive(false);
         scanInfoPanel.SetActive(false);
@@ -61,7 +72,10 @@ public class GameUIHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (playing && GameStateKeeper.getInstance().getGameState() == GameStateKeeper.GameState.Ended)
+        {
+            gameEnded();
+        }
     }
 
 
@@ -85,12 +99,13 @@ public class GameUIHandler : MonoBehaviour
 
     public void startPlaying()
     {
+        playing = true;
         scanInfoPanel2.SetActive(false);
         startButton.SetActive(false);
         scorePanel.SetActive(true);
         timePanel.SetActive(true);
-        if(GameStateKeeper.getInstance().getGameMode() != GameStateKeeper.GameMode.Timer)
-            gameInfoText.text = "Raccogli 8 Monete nel minor tempo possibile!";
+        if (GameStateKeeper.getInstance().getGameMode() != GameStateKeeper.GameMode.Timer)
+            gameInfoText.text = "Raccogli una serie di 8 Monete nel minor tempo possibile!";
         gameInfoPanel.SetActive(true);
 
     }
@@ -105,7 +120,13 @@ public class GameUIHandler : MonoBehaviour
     }
     public void gameEnded()
     {
-
+        playing = false;
+        scorePanel.SetActive(false);
+        timePanel.SetActive(false);
+        gameInfoPanel.SetActive(false);
+        gameEndPanel.SetActive(true);
+        replayButton.SetActive(true);
+        rescanButton.SetActive(true);
     }
 
     public void changeMode()
@@ -121,6 +142,21 @@ public class GameUIHandler : MonoBehaviour
     public void welcomePage()
     {
 
+    }
+
+    public void countTime()
+    {
+        // if (timerGameMode)
+        // {           
+        //     time -= 1.0f / 30.0f;
+        //     timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
+
+        // }
+        // else
+        // {
+        //     time += 1.0f / 30.0f;
+        //     timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
+        // }
     }
 
 }
