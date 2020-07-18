@@ -12,26 +12,22 @@ public class TimeHandler : MonoBehaviour
 
     void Start()
     {
-
-        timerGameMode = GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Timer;
-        if (timerGameMode)
-            time = 60.0f;
-        else
-            time = 0;
+        resetTimeAndMode();
     }
     void Update()
     {
-        if (GameStateKeeper.getInstance().getGameState() != GameStateKeeper.GameState.Ended)
+        if (GameStateKeeper.getInstance().getGameState() == GameStateKeeper.GameState.Playing)
         {
 
             if (timerGameMode)
             {
                 time -= Time.deltaTime;
-                timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
+
                 if (time < 0)
                 {
                     GameStateKeeper.getInstance().setGameState(GameStateKeeper.GameState.Ended);
                 }
+                timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
 
             }
             else
@@ -40,5 +36,14 @@ public class TimeHandler : MonoBehaviour
                 timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
             }
         }
+    }
+
+    public void resetTimeAndMode()
+    {
+        timerGameMode = GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Timer;
+        if (timerGameMode)
+            time = 10.0f;
+        else
+            time = 0;
     }
 }

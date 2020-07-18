@@ -43,6 +43,12 @@ public class GameUIHandler : MonoBehaviour
     private GameObject scanInfoPanel2;
 
     [SerializeField]
+    private GameObject changeModeButton;
+
+    [SerializeField]
+    private Text changeModeText;
+
+    [SerializeField]
     private GameObject replayButton;
 
     [SerializeField]
@@ -52,6 +58,7 @@ public class GameUIHandler : MonoBehaviour
 
     void Awake()
     {
+        changeModeButton.SetActive(false);
         gameEndPanel.SetActive(false);
         replayButton.SetActive(false);
         rescanButton.SetActive(false);
@@ -63,13 +70,7 @@ public class GameUIHandler : MonoBehaviour
         timePanel.SetActive(false);
         startButton.SetActive(false);
     }
-    // Start is called before the first frame update
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (playing && GameStateKeeper.getInstance().getGameState() == GameStateKeeper.GameState.Ended)
@@ -81,6 +82,10 @@ public class GameUIHandler : MonoBehaviour
 
     public void hintScan()
     {
+        changeModeButton.SetActive(false);
+        gameEndPanel.SetActive(false);
+        replayButton.SetActive(false);
+        rescanButton.SetActive(false);
         continueButton.SetActive(true);
         scanInfoPanel.SetActive(true);
         welcomePanel.SetActive(false);
@@ -91,6 +96,10 @@ public class GameUIHandler : MonoBehaviour
     }
     public void startScan()
     {
+        changeModeButton.SetActive(false);
+        gameEndPanel.SetActive(false);
+        replayButton.SetActive(false);
+        rescanButton.SetActive(false);
         scanInfoPanel2.SetActive(true);
         startButton.SetActive(true);
         continueButton.SetActive(false);
@@ -99,6 +108,10 @@ public class GameUIHandler : MonoBehaviour
 
     public void startPlaying()
     {
+        changeModeButton.SetActive(false);
+        gameEndPanel.SetActive(false);
+        replayButton.SetActive(false);
+        rescanButton.SetActive(false);
         playing = true;
         scanInfoPanel2.SetActive(false);
         startButton.SetActive(false);
@@ -121,6 +134,16 @@ public class GameUIHandler : MonoBehaviour
     public void gameEnded()
     {
         playing = false;
+
+        if (GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Timer)
+        {
+            changeModeText.text = "Modalità\n8 Monete";
+        }
+        else
+        {
+            changeModeText.text = "Modalità\nA Tempo";
+        }
+        changeModeButton.SetActive(true);
         scorePanel.SetActive(false);
         timePanel.SetActive(false);
         gameInfoPanel.SetActive(false);
@@ -131,32 +154,12 @@ public class GameUIHandler : MonoBehaviour
 
     public void changeMode()
     {
-
-    }
-
-    public void showHint()
-    {
-
-    }
-
-    public void welcomePage()
-    {
-
-    }
-
-    public void countTime()
-    {
-        // if (timerGameMode)
-        // {           
-        //     time -= 1.0f / 30.0f;
-        //     timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
-
-        // }
-        // else
-        // {
-        //     time += 1.0f / 30.0f;
-        //     timeText.text = time.ToString().Substring(0, time.ToString().IndexOf(".") + 2) + " s";
-        // }
+        if (GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Timer)
+            GameStateKeeper.getInstance().setGameMode(GameStateKeeper.GameMode.Coins);
+        else
+        {
+            GameStateKeeper.getInstance().setGameMode(GameStateKeeper.GameMode.Timer);
+        }
     }
 
 }

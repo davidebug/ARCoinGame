@@ -15,27 +15,60 @@ public class CoinCollector : MonoBehaviour
     [SerializeField]
     private GameObject player;
 
+    [SerializeField]
+    private GameObject hintArrow;
+
     public Text textScore;
 
     private int score = 0;
 
-    private int toCollect = 8;
+    private const int toCollect = 8;
+
+    private float hintTimeout = 10.0f;
+
+
+    void Awake()
+    {
+        hintArrow.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (GameStateKeeper.getInstance().getGameState() == GameStateKeeper.GameState.Playing)
+        {
+            hintTimeout -= Time.deltaTime;
+            if (hintTimeout < 0 && !hintArrow.activeSelf)
+                toggleHintArrow();
+        }
+        else
+        {
+            hintArrow.SetActive(false);
+        }
+
+    }
+
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.tag == "Coin")
-        {
-            Debug.Log("COIN COLLECTED");
-            collision.gameObject.transform.position = CalculateNextPosition();
-            Debug.Log("COIN - New Position --> " + collision.gameObject.transform.position.ToString());
-            score++;
-            textScore.text = score.ToString();
-            coinSound.Play();
-
-            if (GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Coins && score == toCollect)
+        if (GameStateKeeper.getInstance().getGameState() == GameStateKeeper.GameState.Playing)
+            if (collision.collider.tag == "Coin")
             {
-                GameStateKeeper.getInstance().setGameState(GameStateKeeper.GameState.Ended);
+                hintTimeout = 10.0f;
+                if (hintArrow.activeSelf)
+                {
+                    toggleHintArrow();
+                }
+                Debug.Log("COIN COLLECTED");
+                collision.gameObject.transform.position = CalculateNextPosition();
+                Debug.Log("COIN - New Position --> " + collision.gameObject.transform.position.ToString());
+                score++;
+                textScore.text = score.ToString();
+                coinSound.Play();
+
+                if (GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Coins && score == toCollect)
+                {
+                    GameStateKeeper.getInstance().setGameState(GameStateKeeper.GameState.Ended);
+                }
             }
-        }
     }
 
     Vector3 CalculateNextPosition()
@@ -45,14 +78,11 @@ public class CoinCollector : MonoBehaviour
         Debug.Log("COIN - Trackable Planes found: " + planeManager.trackables.count.ToString());
         foreach (ARPlane plane in planeManager.trackables)
         {
-            Debug.Log("COIN - Plane Rand");
             Vector3 min = plane.gameObject.GetComponent<MeshFilter>().mesh.bounds.min;
             Vector3 max = plane.gameObject.GetComponent<MeshFilter>().mesh.bounds.max;
-            Debug.Log("COIN - MIN Plane Bound --> " + min.ToString());
-            Debug.Log("COIN - MAX Plane Bound --> " + max.ToString());
             Debug.Log(plane.gameObject.transform.position.y);
             Vector3 position = plane.gameObject.transform.position - new Vector3((Random.Range(min.x * 0.90f, max.x * 0.90f)), plane.gameObject.transform.position.y * 0.02f, (Random.Range(min.z * 0.90f, max.z * 0.90f)));
-            if (Vector3.Distance(player.transform.position, position) > 0.1)
+            if (Vector3.Distance(player.transform.position, position) > 1.5)
                 possiblePositions.Add(position);
         }
         if (possiblePositions.Count == 0)
@@ -64,5 +94,26 @@ public class CoinCollector : MonoBehaviour
         return possiblePositions[r];
 
     }
+
+    public void toggleHintArrow()
+    {
+        if (hintArrow.activeSelf)
+        {
+            hintArrow.SetActive(false);
+        }
+        else
+        {
+            hintArrow.SetActive(true);
+        }
+    }
+
+    public void resetArrowAndScore()
+    {
+        hintArrow.SetActive(false);
+        hintTimeout = 10.0f;
+        score = 0;
+        textScore.text = "0";
+    }
+
 
 }

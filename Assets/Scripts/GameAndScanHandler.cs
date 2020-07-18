@@ -26,20 +26,43 @@ public class GameAndScanHandler : MonoBehaviour
     private Text endText;
 
     [SerializeField]
+    private ARSession arSession;
+
+    [SerializeField]
     private Text scoreText;
 
     [SerializeField]
     private Text timeText;
 
     [SerializeField]
-    public GameObject PlaceablePrefab;
+    private GameObject PlaceablePrefab;
+
+    [SerializeField]
+    private GameObject arrow;
 
     private bool ended = false;
+    private bool resetted = false;
+
+    private float resetTimeout = 2.0f;
+    private List<GameObject> spawnedCoins;
 
     void Update()
     {
-        if (!ended)
+        if (resetted)
         {
+            planeLevelText.text = "Area Livello 1";
+            planeLevelText.color = Color.black;
+            resetTimeout -= Time.deltaTime;
+            if (resetTimeout < 0)
+            {
+                resetTimeout = 2.0f;
+                resetted = false;
+            }
+        }
+        else if (!ended)
+        {
+            arrow.transform.LookAt(getArrowTarget());
+            arrow.transform.Rotate(new Vector3(85, 0, 0), Space.Self);
             if (spawnedObj != null)
                 Debug.Log("Coin position --> " + spawnedObj.transform.position.ToString());
 
@@ -50,13 +73,12 @@ public class GameAndScanHandler : MonoBehaviour
 
                     Vector3 min = plane.gameObject.GetComponent<MeshFilter>().mesh.bounds.min;
                     Vector3 max = plane.gameObject.GetComponent<MeshFilter>().mesh.bounds.max;
-
-                    if (max.x > 1.8 && max.z > 1.8 && planeLevelText.text == "Area Livello 1")
+                    if (max.x > 1.6 && max.z > 1.6 && planeLevelText.text == "Area Livello 1")
                     {
                         planeLevelText.text = "Area Livello 2";
                         planeLevelText.color = Color.cyan;
                     }
-                    if (max.x > 2.3 && max.z > 2.3 && planeLevelText.text == "Area Livello 2")
+                    if (max.x > 2.4 && max.z > 2.4 && planeLevelText.text == "Area Livello 2")
                     {
                         planeLevelText.text = "Area Livello 3";
                         planeLevelText.color = Color.blue;
@@ -80,11 +102,13 @@ public class GameAndScanHandler : MonoBehaviour
                 if (GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Timer)
                 {
                     planeLevelTextEnd.text = planeLevelText.text;
+                    planeLevelTextEnd.color = planeLevelText.color;
                     endText.text = "Tempo Scaduto!\n\nHai raccolto\n" + scoreText.text + " Monete!";
                 }
                 else
                 {
-                    planeLevelTextEnd = planeLevelText;
+                    planeLevelTextEnd.text = planeLevelText.text;
+                    planeLevelTextEnd.color = planeLevelText.color;
                     endText.text = "Hai Finito!\n\nHai raccolto tutte le monete in " + timeText.text;
                 }
             }
@@ -94,7 +118,9 @@ public class GameAndScanHandler : MonoBehaviour
 
     void Awake()
     {
+        spawnedCoins = new List<GameObject>();
         planeLevelText.text = "Area Livello 1";
+        planeLevelText.color = Color.black;
         GameStateKeeper.getInstance().setGameState(GameStateKeeper.GameState.Welcome);
         raycastManager = GetComponent<ARRaycastManager>();
         aRPlaneManager = aRPlaneManager.GetComponent<ARPlaneManager>();
@@ -108,14 +134,11 @@ public class GameAndScanHandler : MonoBehaviour
         Debug.Log("COIN - Trackable Planes found: " + aRPlaneManager.trackables.count.ToString());
         foreach (ARPlane plane in aRPlaneManager.trackables)
         {
-            Debug.Log("COIN - Plane Rand");
             Vector3 min = plane.gameObject.GetComponent<MeshFilter>().mesh.bounds.min;
             Vector3 max = plane.gameObject.GetComponent<MeshFilter>().mesh.bounds.max;
-            Debug.Log("COIN - MIN Plane Bound --> " + min.ToString());
-            Debug.Log("COIN - MAX Plane Bound --> " + max.ToString());
             Debug.Log(plane.gameObject.transform.position.y);
             Vector3 position = plane.gameObject.transform.position - new Vector3((Random.Range(min.x * 0.90f, max.x * 0.90f)), plane.gameObject.transform.position.y * 0.02f, (Random.Range(min.z * 0.90f, max.z * 0.90f)));
-            if (Vector3.Distance(player.transform.position, position) > 0.1)
+            if (Vector3.Distance(player.transform.position, position) > 1.5)
                 possiblePositions.Add(position);
         }
         if (possiblePositions.Count == 0)
@@ -131,6 +154,7 @@ public class GameAndScanHandler : MonoBehaviour
 
     public void TogglePlaneDetection()
     {
+        ended = false;
         if (GameStateKeeper.getInstance().getGameState() != GameStateKeeper.GameState.Scanning)
             GameStateKeeper.getInstance().setGameState(GameStateKeeper.GameState.Scanning);
         else
@@ -142,20 +166,58 @@ public class GameAndScanHandler : MonoBehaviour
         {
             plane.gameObject.SetActive(aRPlaneManager.enabled);
         }
+        Debug.Log("TOGGLED PLANE DETECTION");
 
     }
 
     public void StartPlaying()
     {
+        ended = false;
         GameStateKeeper.getInstance().setGameState(GameStateKeeper.GameState.Playing);
         Vector3 position = CalculateNextPosition();
         if (!position.Equals(new Vector3(0, 0, 0)))
         {
             spawnedObj = Instantiate(PlaceablePrefab, position, Quaternion.identity);
+            spawnedCoins.Add(spawnedObj);
             position = CalculateNextPosition();
             spawnedObj = Instantiate(PlaceablePrefab, position, Quaternion.identity);
+            spawnedCoins.Add(spawnedObj);
         }
+        Debug.Log("START PLAYING");
+    }
 
+    public Transform getArrowTarget()
+    {
+        float distance = float.MaxValue;
+        Transform toReturn = null;
+        foreach (GameObject coin in spawnedCoins)
+        {
+            if (Vector3.Distance(coin.transform.position, player.transform.position) < distance)
+            {
+                distance = Vector3.Distance(coin.transform.position, player.transform.position);
+                toReturn = coin.transform;
+            }
+        }
+        if (toReturn != null)
+            return toReturn;
+        else
+            return player.transform;
+    }
+
+    public void resetCoins()
+    {
+        foreach (GameObject coin in spawnedCoins)
+        {
+            coin.SetActive(false);
+        }
+        spawnedCoins.Clear();
+    }
+
+
+    public void resetPlanes()
+    {
+        resetted = true;
+        arSession.Reset();
     }
 
 }
