@@ -42,7 +42,7 @@ public class TimeHandler : MonoBehaviour
     {
         timerGameMode = GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Timer;
         if (timerGameMode)
-            time = 10.0f;
+            time = 60.0f;
         else
             time = 0;
     }

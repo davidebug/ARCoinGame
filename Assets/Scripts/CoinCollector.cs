@@ -81,7 +81,7 @@ public class CoinCollector : MonoBehaviour
             Vector3 min = plane.gameObject.GetComponent<MeshFilter>().mesh.bounds.min;
             Vector3 max = plane.gameObject.GetComponent<MeshFilter>().mesh.bounds.max;
             Debug.Log(plane.gameObject.transform.position.y);
-            Vector3 position = plane.gameObject.transform.position - new Vector3((Random.Range(min.x * 0.90f, max.x * 0.90f)), plane.gameObject.transform.position.y * 0.02f, (Random.Range(min.z * 0.90f, max.z * 0.90f)));
+            Vector3 position = plane.gameObject.transform.position - new Vector3((Random.Range(min.x * 0.80f, max.x * 0.80f)), plane.gameObject.transform.position.y * 0.03f, (Random.Range(min.z * 0.80f, max.z * 0.80f)));
             if (Vector3.Distance(player.transform.position, position) > 1.5)
                 possiblePositions.Add(position);
         }

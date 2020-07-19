@@ -54,8 +54,12 @@ public class GameUIHandler : MonoBehaviour
     [SerializeField]
     private GameObject rescanButton;
 
+    [SerializeField]
+    private GameObject touchAlert;
+
     private bool playing = false;
 
+    private float touchAlertTimeout = 4.0f;
     void Awake()
     {
         changeModeButton.SetActive(false);
@@ -69,13 +73,29 @@ public class GameUIHandler : MonoBehaviour
         scorePanel.SetActive(false);
         timePanel.SetActive(false);
         startButton.SetActive(false);
+        touchAlert.SetActive(false);
     }
 
     void Update()
-    {
+    {   
+        if(touchAlertTimeout < 0){
+            touchAlert.SetActive(false);
+            touchAlertTimeout = 4.0f;
+        }
+        if(touchAlertTimeout < 4){
+            touchAlertTimeout -= Time.deltaTime;
+        }
         if (playing && GameStateKeeper.getInstance().getGameState() == GameStateKeeper.GameState.Ended)
         {
             gameEnded();
+        }
+        else if (GameStateKeeper.getInstance().getGameState() == GameStateKeeper.GameState.Playing)
+        {
+            if (Input.touchCount > 0)
+            {
+                touchAlert.SetActive(true);
+                touchAlertTimeout -= Time.deltaTime;
+            }
         }
     }
 
@@ -111,7 +131,7 @@ public class GameUIHandler : MonoBehaviour
         changeModeButton.SetActive(false);
         gameEndPanel.SetActive(false);
         replayButton.SetActive(false);
-        rescanButton.SetActive(false);
+        rescanButton.SetActive(false);    
         playing = true;
         scanInfoPanel2.SetActive(false);
         startButton.SetActive(false);
@@ -120,6 +140,7 @@ public class GameUIHandler : MonoBehaviour
         if (GameStateKeeper.getInstance().getGameMode() != GameStateKeeper.GameMode.Timer)
             gameInfoText.text = "Raccogli una serie di 8 Monete nel minor tempo possibile!";
         gameInfoPanel.SetActive(true);
+        touchAlert.SetActive(false);
 
     }
 
