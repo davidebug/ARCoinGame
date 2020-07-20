@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
-
+using System.IO;
 
 public class CoinCollector : MonoBehaviour
 {
@@ -115,5 +115,34 @@ public class CoinCollector : MonoBehaviour
         textScore.text = "0";
     }
 
+    public void ShareContent()
+    {
+        StartCoroutine(TakeScreenshotAndShare());
+    }
+    private IEnumerator TakeScreenshotAndShare()
+    {
+        yield return new WaitForEndOfFrame();
+
+        Texture2D ss = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        ss.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        ss.Apply();
+
+        string filePath = Path.Combine(Application.temporaryCachePath, "moneyGrabberTmp.png");
+        File.WriteAllBytes(filePath, ss.EncodeToPNG());
+        Destroy(ss);
+
+        if (GameStateKeeper.getInstance().getGameMode() == GameStateKeeper.GameMode.Timer)
+            new NativeShare().AddFile(filePath)
+                .SetSubject("Money Grabber AR").SetText("Ho totalizzato un punteggio di " + score.ToString() + " su Money Grabber AR, prova anche tu!")
+                .SetCallback((result, shareTarget) => Debug.Log("Share result: " + result + ", selected app: " + shareTarget))
+                .Share();
+        else
+        {
+            new NativeShare().AddFile(filePath)
+        .SetSubject("Money Grabber AR").SetText("Ho preso tutte le monete su Money Grabber AR, prova anche tu!")
+        .SetCallback((result, shareTarget) => Debug.Log("Share result: " + result + ", selected app: " + shareTarget))
+        .Share();
+        }
+    }
 
 }

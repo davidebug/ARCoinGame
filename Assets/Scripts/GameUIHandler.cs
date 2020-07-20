@@ -37,6 +37,9 @@ public class GameUIHandler : MonoBehaviour
     private GameObject gameEndPanel;
 
     [SerializeField]
+    private GameObject shareButton;
+
+    [SerializeField]
     private Text gameInfoText;
 
     [SerializeField]
@@ -74,6 +77,7 @@ public class GameUIHandler : MonoBehaviour
         timePanel.SetActive(false);
         startButton.SetActive(false);
         touchAlert.SetActive(false);
+        shareButton.SetActive(false);
     }
 
     void Update()
@@ -113,6 +117,7 @@ public class GameUIHandler : MonoBehaviour
         mode2Button.SetActive(false);
         infoMode1.SetActive(false);
         infoMode2.SetActive(false);
+        shareButton.SetActive(false);
     }
     public void startScan()
     {
@@ -124,6 +129,7 @@ public class GameUIHandler : MonoBehaviour
         startButton.SetActive(true);
         continueButton.SetActive(false);
         scanInfoPanel.SetActive(false);
+        shareButton.SetActive(false);
     }
 
     public void startPlaying()
@@ -137,6 +143,7 @@ public class GameUIHandler : MonoBehaviour
         startButton.SetActive(false);
         scorePanel.SetActive(true);
         timePanel.SetActive(true);
+        shareButton.SetActive(false);
         if (GameStateKeeper.getInstance().getGameMode() != GameStateKeeper.GameMode.Timer)
             gameInfoText.text = "Raccogli una serie di 8 Monete nel minor tempo possibile!";
         gameInfoPanel.SetActive(true);
@@ -171,6 +178,7 @@ public class GameUIHandler : MonoBehaviour
         gameEndPanel.SetActive(true);
         replayButton.SetActive(true);
         rescanButton.SetActive(true);
+        shareButton.SetActive(true);
     }
 
     public void changeMode()
